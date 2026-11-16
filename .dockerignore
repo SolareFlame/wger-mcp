@@ -1,0 +1,9 @@
+node_modules
+dist
+test
+.git
+.github
+*.md
+wger-schema.json
+.env
+.env.*
