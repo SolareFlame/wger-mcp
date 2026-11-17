@@ -4,7 +4,7 @@ Serveur MCP distant (TypeScript) qui relie claude.ai (connecteur personnalisé) 
 instance [wger](https://github.com/wger-project/wger) auto-hébergée.
 
 Multi-utilisateur et sans état : chaque utilisateur met **sa** clé API wger dans l'URL du
-connecteur, `https://mcp.gym.solare.dev/<clé>/mcp`. Le serveur ne stocke rien.
+connecteur, `https://mcp-gym.solare.dev/<clé>/mcp`. Le serveur ne stocke rien.
 
 **Version wger testée : 2.8.0-dev.5** (`/api/v2/version/`, image `wger/server:latest`,
 vérifiée le 2026-11-16). Le schéma OpenAPI de cette instance est versionné dans
@@ -118,16 +118,20 @@ networks:
 ```
 
 ```caddyfile
-mcp.gym.solare.dev {
+mcp-gym.solare.dev {
 	reverse_proxy wger-mcp:8000
 }
 ```
 
-Connecteur claude.ai : `https://mcp.gym.solare.dev/<clé API wger>/mcp`. La clé se trouve
+Connecteur claude.ai : `https://mcp-gym.solare.dev/<clé API wger>/mcp`. La clé se trouve
 dans wger, sous Paramètres → Clé API.
 
 L'image tourne en utilisateur `node`, avec un `HEALTHCHECK` sur `GET /healthz` qui
 n'appelle pas wger.
+
+Derrière Cloudflare (proxy), le domaine doit rester à un seul niveau de sous-domaine
+(`mcp-gym.solare.dev`, pas `mcp.gym.solare.dev`) : le certificat gratuit Cloudflare ne
+couvre que `*.solare.dev`.
 
 La clé est dans l'URL : ne pas activer les access logs Caddy pour ce site (Caddy n'en écrit
 pas sans directive `log`), ou alors masquer le chemin.
